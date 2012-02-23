@@ -30,24 +30,16 @@ module LazyHighCharts
       end
       options_collection << "series: #{object.data.to_json}"
 
-      graph =<<-EOJS
-      <script type="text/javascript">
-      window.onload = function(){
-        jQuery(function() {
-          var options, chart;
-          options = { #{options_collection.join(",")} };
-          #{capture(&block) if block_given?}
-          chart = new Highcharts.#{type}(options);
-        });
-      };
-      </script>
+      graph =<<-EOJS      
+      $(document).ready(function() {        
+        var options, chart;
+        options = { #{options_collection.join(",")} };
+        #{capture(&block) if block_given?}
+        chart = new Highcharts.#{type}(options);
+      });      
       EOJS
 
-      if defined?(raw)
-        return raw(graph) 
-      else
-        return graph
-      end
+      return javascript_tag graph
 
     end
   end
